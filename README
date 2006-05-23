@@ -1,0 +1,60 @@
+RemoteHelpers
+=============
+
+Provides gui feedback for any remote function calls.
+
+All remote actions are automatically enabled to show a gui indicator during a remote call with this plugin.
+
+remote_function
+-------------------
+Control of the gui indicator is controlled with the :indicator option which
+can be passed to any remote function.
+
+By default :indicator is set to an id of an element to enable the hiding and
+display of the indicator.  :indicator can be set to false to disable the display
+of the indicator.
+
+As previously stated, :indicator is set to an id of element that will be hidden
+and displayed during a remote call.  The default value of this option is set
+to the value 'indicator', but can be overriden via the RemoteIndicator::DEFAULT_ID
+constant.  This can be set in your environment.rb file.
+
+
+indicator
+-------------------
+A helper is provided to place an image as the gui indicator on your page called
+simply indicator.  The default :id of the image is the same used for the remote
+calls... 'indicator', also overridable via RemoteIndicator::DEFAULT_ID.  Also the
+image used defaults to 'indicator.gif', but this can be changed with the
+RemoteIndicator::DEFAULT_IMAGE constant.
+
+An additional option can be passed to the indicator method called :hide which
+controls if the indicator is initally hidden or not (default is true).
+
+
+examples
+-------------------
+- To disable the gui indicator
+<%= remote_function :url => {:action => 'dosomething'}, :indicator => false %>
+
+- To use the default values
+<%= remote_function :url => {:action => 'dosomething'} %> <%= indicator %>
+
+- To use a custom :id
+<%= remote_function :url => {:action => 'dosomething'}, :indicator => 'custom' %> <%= indicator :id => 'custom' %>
+
+
+Additional Form Methods
+-----------------------
+Both the form_remote_tag and submit_to_remote methods disable their associated
+form by default during a remote call.  This is useful to prevent a user from
+submitting a form twice while a remote call is in progress.
+
+To prevent this from occuring use the :disable_form option and set it to false
+(default is true).
+
+eg.) form_remote_tag(:url => {:action => 'dosomething'}, :disable_form => false)
+
+
+For feedback, bug fixes, etc, email...
+andrew@redlinesoftware.com
