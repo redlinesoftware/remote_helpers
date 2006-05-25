@@ -16,7 +16,7 @@ of the indicator.
 
 As previously stated, :indicator is set to an id of element that will be hidden
 and displayed during a remote call.  The default value of this option is set
-to the value 'indicator', but can be overriden via the RemoteIndicator::DEFAULT_ID
+to the value 'indicator', but can be overriden via the RemoteIndicator.default_id
 constant.  This can be set in your environment.rb file.
 
 
@@ -24,9 +24,9 @@ indicator
 -------------------
 A helper is provided to place an image as the gui indicator on your page called
 simply indicator.  The default :id of the image is the same used for the remote
-calls... 'indicator', also overridable via RemoteIndicator::DEFAULT_ID.  Also the
+calls... 'indicator', also overridable via RemoteIndicator.default_id.  Also the
 image used defaults to 'indicator.gif', but this can be changed with the
-RemoteIndicator::DEFAULT_IMAGE constant.
+RemoteIndicator.default_image constant.
 
 An additional option can be passed to the indicator method called :hide which
 controls if the indicator is initally hidden or not (default is true).
@@ -54,7 +54,3 @@ To prevent this from occuring use the :disable_form option and set it to false
 (default is true).
 
 eg.) form_remote_tag(:url => {:action => 'dosomething'}, :disable_form => false)
-
-
-For feedback, bug fixes, etc, email...
-andrew@redlinesoftware.com

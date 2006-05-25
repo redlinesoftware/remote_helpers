@@ -1,13 +1,16 @@
 # put the defaults in a seperate namespace
 # shorter and more related path name for overiding the options
-module RemoteIndicator
-  DEFAULT_IMAGE = 'indicator.gif' unless const_defined?('DEFAULT_IMAGE')
-  DEFAULT_ID    = 'indicator'     unless const_defined?('DEFAULT_ID')
+class RemoteIndicator
+  @@default_image = 'indicator.gif'
+  cattr_accessor :default_image
+
+  @@default_id    = 'indicator'
+  cattr_accessor :default_id
 end
 
 module ActionView::Helpers::PrototypeHelper
 
-  def indicator(options = {:id => RemoteIndicator::DEFAULT_ID})
+  def indicator(options = {:id => RemoteIndicator.default_id})
     options.reverse_merge! :hide => true
 
     if options.delete(:hide)
@@ -15,7 +18,7 @@ module ActionView::Helpers::PrototypeHelper
       options[:style] = (options[:style] || '') + ';display:none'
     end
 
-    image_tag RemoteIndicator::DEFAULT_IMAGE, options
+    image_tag RemoteIndicator.default_image, options
   end
 
   alias :remote_function_old :remote_function
@@ -23,7 +26,7 @@ module ActionView::Helpers::PrototypeHelper
   # Set the :indicator option to an id of an element to show and hide during a remote call.
   # Set :indicator to false if no indicator is to be used (default is RemoteIndicator::DEFAULT_INDICATOR_ID).
   def remote_function(options)
-    options.reverse_merge! :indicator => RemoteIndicator::DEFAULT_ID
+    options.reverse_merge! :indicator => RemoteIndicator.default_id
 
     if indicator = options.delete(:indicator)
       options[:before] = "Element.show('#{indicator}');#{options[:before]}"
