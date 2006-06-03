@@ -13,10 +13,7 @@ module ActionView::Helpers::PrototypeHelper
   def indicator(options = {:id => RemoteIndicator.default_id})
     options.reverse_merge! :hide => true
 
-    if options.delete(:hide)
-      options[:style] = '' if options[:style].nil?
-      options[:style] = (options[:style] || '') + ';display:none'
-    end
+    options[:style] = [options[:style], 'display:none'].compact.join(';') if options.delete(:hide)
 
     image_tag RemoteIndicator.default_image, options
   end
@@ -29,8 +26,7 @@ module ActionView::Helpers::PrototypeHelper
     options.reverse_merge! :indicator => RemoteIndicator.default_id
 
     if indicator = options.delete(:indicator)
-      options[:before] = "Element.show('#{indicator}');#{options[:before]}"
-      options[:complete] = "Element.hide('#{indicator}');#{options[:complete]}"
+      add_callback_code! options, {:before => "Element.show('#{indicator}')", :complete => "Element.hide('#{indicator}')"}
     end
 
     remote_function_old(options)
@@ -45,8 +41,7 @@ module ActionView::Helpers::PrototypeHelper
     options.reverse_merge! :disable_form => true
 
     if options.delete(:disable_form)
-      options[:before] = "var form = this; Form.disable(form);#{options[:before]}"
-      options[:complete] = "Form.enable(form);#{options[:complete]}"
+      add_callback_code! options, {:before => "var form = this; Form.disable(form)", :complete => "Form.enable(form)"}
     end
     
     form_remote_tag_old(options)
@@ -61,10 +56,15 @@ module ActionView::Helpers::PrototypeHelper
     options.reverse_merge! :disable_form => true
 
     if options.delete(:disable_form)
-      options[:before] = "Form.disable('#{options[:submit]}');#{options[:before]}"
-      options[:complete] = "Form.enable('#{options[:submit]}');#{options[:complete]}"
+      add_callback_code! options, {:before => "Form.disable('#{options[:submit]}')", :complete => "Form.enable('#{options[:submit]}')"}
     end
 
     submit_to_remote_old(name, value, options)
+  end
+
+private
+  def add_callback_code!(options, code)
+    options[:before] = [code[:before], options[:before]].compact.join(';')
+    options[:complete] = [code[:complete], options[:complete]].compact.join(';')
   end
 end
