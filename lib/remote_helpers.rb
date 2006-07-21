@@ -26,7 +26,13 @@ module ActionView::Helpers::PrototypeHelper
     options.reverse_merge! :indicator => RemoteIndicator.default_id
 
     if indicator = options.delete(:indicator)
-      add_callback_code! options, {:before => "Element.show('#{indicator}')", :complete => "Element.hide('#{indicator}')"}
+      before_js = "Element.show('#{indicator}')"
+      event_options = {
+        :before => (RAILS_ENV == 'development' ? "try { #{before_js} } catch(e) { alert('The remote helper indicator \\'#{indicator}\\' has not been defined.') }" : before_js),
+        :complete => "Element.hide('#{indicator}')"
+      }
+
+      add_callback_code! options, event_options
     end
 
     remote_function_old(options)
