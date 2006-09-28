@@ -24,6 +24,25 @@ class RemoteIndicator
   cattr_accessor :default_id
 end
 
+# Progress indication is built in using the <tt>indicator</tt> method and the optional <tt>:indicator</tt> option for remote calls.
+# See <tt>remote_function</tt> documentation for more information.
+#
+# The <tt>:indicator</tt> options adds the functionality of using a remote indicator (an image) during the execution
+# of all remote functions.
+#
+# Functionality added to disable the form by default during a remote call using methods such as <tt>remote_function</tt>,
+# <tt>form_remote_tag</tt>, <tt>remote_form_for</tt> and <tt>submit_to_remote</tt>.
+#
+# This is useful to prevent a user from submitting a form twice while a remote call is in progress
+# since the submit button will be disabled and therefore not clickable.
+#
+# Additional options:
+# * <tt>:indicator</tt> - The css id of an element to show and hide during a remote call.
+#   Defaults to <tt>RemoteIndicator.default_id</tt>.
+#   Set :indicator to false if no indicator is to be used.
+# * <tt>:disable_form</tt> - Specifies if the form will disable or not during the remote call.
+#   Defaults to true.
+# Set :disable_form to false to keep the form enabled during a remote function call.
 module ActionView::Helpers::PrototypeHelper
 
   # Creates an indicator image.  The options supplied are the same used with +image_tag+
@@ -51,19 +70,23 @@ module ActionView::Helpers::PrototypeHelper
 
   alias :remote_function_old :remote_function
 
-  # Adds the functionality of using a remote indicator (an image) during the execution
-  # of all remote functions.
-  #
-  # Additional options:
-  # * <tt>:indicator</tt> - The css id of an element to show and hide during a remote call.
-  # Defaults to <tt>RemoteIndicator.default_id</tt>.
-  # Set :indicator to false if no indicator is to be used.
-  #
   # === Examples
   #
   # * To use the default values - <tt><%= remote_function :url => {:action => 'dosomething'} %> <%= indicator %></tt>
   # * To disable the gui indicator - <tt><%= remote_function :url => {:action => 'dosomething'}, :indicator => false %></tt>
   # * To use a custom :id - <tt><%= remote_function :url => {:action => 'dosomething'}, :indicator => 'custom' %> <%= indicator :id => 'custom' %></tt>
+  #
+  # === Examples using :disable_form
+  # See module documentation for usage of the <tt>:disable_form</tt> option.
+  #
+  # Automatically disables a form (no additional options)
+  #   <%= remote_function(:update => 'someid', :submit => 'myform', :url => {:action => 'dosomething'}) %>
+  #
+  # Prevents a form from being disabled
+  #   <%= remote_function(:update => 'someid', :submit => 'myform', :url => {:action => 'dosomething'}, :disable_form => false) %>
+  #
+  # No form disabled as no :submit option is provided
+  #   <%= remote_function(:update => 'someid', :url => {:action => 'dosomething'}) %>
   #
   # ==== IMPORTANT GOTCHA
   # Don't forget to use <tt><%= indicator %></tt> on the page with remote calls or the javascript will fail
@@ -82,19 +105,14 @@ module ActionView::Helpers::PrototypeHelper
       add_callback_code! options, event_options
     end
 
+    add_disable_options! options
     remote_function_old(options)
   end
 
   alias :form_remote_tag_old :form_remote_tag
   
-  # Additional functionality added to disable the form by default during a remote call.
-  # This is useful to prevent a user from submitting a form twice while a remote call is in progress
-  # since the submit button will be disabled and therefore not clickable.
-  #
-  # Additional options:
-  # * <tt>:disable_form</tt> - Specifies if the form will disable or not during the remote call.
-  #   Defaults to true.
-  # Set :disable_form to false to keep the form enabled during a remote function call.
+  # See module documentation for usage of the <tt>:disable_form</tt> option.
+  # See <tt>remote_function</tt> documentation for usage of the <tt>:indicator</tt> option.
   #
   # === Examples
   #
@@ -115,35 +133,32 @@ module ActionView::Helpers::PrototypeHelper
 
   alias :submit_to_remote_old :submit_to_remote
 
-  # The option :disable_form disables a form (specified using the :submit option)
-  
-  # Additional functionality added to disable a form (specified using the :submit option) by default during a remote call.
-  # This is useful to prevent a user from submitting a form twice while a remote call is in progress
-  # since the submit button will be disabled and therefore not clickable.
+  # See module documentation for usage of the <tt>:disable_form</tt> option.
+  # See <tt>remote_function</tt> documentation for usage of the <tt>:indicator</tt> option.
   #
-  # Additional options:
-  # * <tt>:disable_form</tt> - Specifies if a form will disable or not during the remote call.
-  #   Defaults to true.
-  # Set :disable_form to false to keep the form enabled during a remote function call.
+  # The option <tt>:disable_form</tt> disables a form (specified using the :submit option)
   #
   # === Example
   #
   # Automatically disables a form (no additional options)
-  #   <%= submit_to_remote('name', 'Submit', :url => {:action => 'dosomething'}) %>
+  #   <%= submit_to_remote('name', 'Submit', :submit => 'myform', :url => {:action => 'dosomething'}) %>
   #
   # Prevents a form from being disabled
   #   <%= submit_to_remote('name', 'Submit', :submit => 'myform', :url => {:action => 'dosomething'}, :disable_form => false) %>
   def submit_to_remote(name, value, options = {})
-    options.reverse_merge! :disable_form => true
-
-    if options.delete(:disable_form)
-      add_callback_code! options, {:before => "Form.disable('#{options[:submit]}')", :complete => "Form.enable('#{options[:submit]}')"}
-    end
-
+    add_disable_options! options
     submit_to_remote_old(name, value, options)
   end
 
 private
+  def add_disable_options!(options)
+    options.reverse_merge! :disable_form => true
+
+    if options.delete(:disable_form) && options[:submit]
+      add_callback_code! options, {:before => "Form.disable('#{options[:submit]}')", :complete => "Form.enable('#{options[:submit]}')"}
+    end
+  end
+  
   def add_callback_code!(options, code)
     options[:before] = [code[:before], options[:before]].compact.join(';')
     options[:complete] = [code[:complete], options[:complete]].compact.join(';')

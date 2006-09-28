@@ -1,1 +1,4 @@
 See Rdoc
+
+Sept. 27, 2006
+- Added auto form disable for remote_functions that use the :submit option.  This can be disabled using :disable_form => false
