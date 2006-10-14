@@ -98,7 +98,7 @@ module ActionView::Helpers::PrototypeHelper
     if indicator = options.delete(:indicator)
       before_js = "Element.show('#{indicator}')"
       event_options = {
-        :before => (RAILS_ENV == 'development' ? "try { #{before_js} } catch(e) { alert('The remote helper indicator \\'#{indicator}\\' has not been defined.') }" : before_js),
+        :before => (RAILS_ENV == 'development' ? "try { #{before_js} } catch(e) { alert('The remote helper indicator \\'#{indicator}\\' has not been defined.\\n\\nEither define the indicator with the \\'indicator\\' method or pass :indicator => false as an option to disable the indicator.') }" : before_js),
         :complete => "Element.hide('#{indicator}')"
       }
 
