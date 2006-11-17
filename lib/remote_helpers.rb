@@ -124,9 +124,10 @@ module ActionView::Helpers::PrototypeHelper
   def form_remote_tag(options = {})
     options.reverse_merge! :disable_form => true
 
-    if options.delete(:disable_form)
-      add_callback_code! options, {:before => "var form = this; Form.disable(form)", :complete => "Form.enable(form)"}
-    end
+#    a change in prototype doesn't send disabled form fields now, so we can't use this feature currently
+#    if options.delete(:disable_form)
+#      add_callback_code! options, {:before => "var form = this; Form.disable(form)", :complete => "Form.enable(form)"}
+#    end
     
     form_remote_tag_old(options)
   end
