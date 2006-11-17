@@ -102,7 +102,7 @@ module ActionView::Helpers::PrototypeHelper
         :complete => "Element.hide('#{indicator}')"
       }
 
-      add_callback_code! options, event_options
+      merge_option_values! options, event_options
     end
 
     add_disable_options! options
@@ -124,10 +124,10 @@ module ActionView::Helpers::PrototypeHelper
   def form_remote_tag(options = {})
     options.reverse_merge! :disable_form => true
 
-#    a change in prototype doesn't send disabled form fields now, so we can't use this feature currently
-#    if options.delete(:disable_form)
-#      add_callback_code! options, {:before => "var form = this; Form.disable(form)", :complete => "Form.enable(form)"}
-#    end
+    if options.delete(:disable_form)
+      # we can't disable using :before because disabled fields aren't serialized, must use :after
+      merge_option_values! options, {:after => "var form = this; Form.disable(form)", :complete => "Form.enable(form)"}
+    end
     
     form_remote_tag_old(options)
   end
@@ -156,12 +156,12 @@ private
     options.reverse_merge! :disable_form => true
 
     if options.delete(:disable_form) && options[:submit]
-      add_callback_code! options, {:before => "Form.disable('#{options[:submit]}')", :complete => "Form.enable('#{options[:submit]}')"}
+      # we can't disable using :before because disabled fields aren't serialized, must use :after
+      merge_option_values! options, {:after => "Form.disable('#{options[:submit]}')", :complete => "Form.enable('#{options[:submit]}')"}
     end
   end
   
-  def add_callback_code!(options, code)
-    options[:before] = [code[:before], options[:before]].compact.join(';')
-    options[:complete] = [code[:complete], options[:complete]].compact.join(';')
+  def merge_option_values!(options, code, sep = ';')
+    code.each_pair {|key,value| options[key] = [value, options[key]].compact.join(sep)}
   end
 end
