@@ -76,13 +76,12 @@ module ActionView::Helpers::PrototypeHelper
     options
   end
 
-
   # Creates an indicator image.  The options supplied are the same used with +image_tag+
   #
   # This method differs from +indicator+ in that it simply produces the indicator image without
   # the additional indicator options to for hiding the image by default etc.  Without the
   # additional options, this method can create the standalone indicator image for use in more
-  # complex indicators that use the image in combonation with additional markup.
+  # complex indicators that use the image in combination with additional markup.
   # 
   # === Example
   #
