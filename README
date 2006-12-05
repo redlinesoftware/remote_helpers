@@ -5,7 +5,8 @@ Last time I checked this plugin was incompatible with the unobtrusive javascript
 == Updates
 
 Dec. 5, 2006 - Added two additional methods, indicator_options and indicator_image, to allow for more flexible indicators.  See the api for more details.
-  <%= content_tag 'div', 'Updating Data... ' + indicator_image, indicator_options %>
+
+<%= content_tag 'div', 'Updating Data... ' + indicator_image, indicator_options %>
 
 Nov. 16, 2006 - If using the :disable_form option (set to true by default), the form is now disabled after the ajax request is made, not before. This change is required due to a change in prototype so make sure to update to the latest version of this plugin.
 
@@ -16,19 +17,23 @@ All remote actions are automatically enabled to show a gui indicator during a re
 == Examples
 
 - To disable the gui indicator
-  <%= remote_function :url => {:action => 'dosomething'}, :indicator => false %>
+
+<%= remote_function :url => {:action => 'dosomething'}, :indicator => false %>
 
 - To use the default values
-  <%= remote_function :url => {:action => 'dosomething'} %> <%= indicator %>
+
+<%= remote_function :url => {:action => 'dosomething'} %> <%= indicator %>
 
 - To use a custom :id
-  <%= remote_function :url => {:action => 'dosomething'}, :indicator => 'custom' %> <%= indicator :id => 'custom' %>
+
+<%= remote_function :url => {:action => 'dosomething'}, :indicator => 'custom' %> <%= indicator :id => 'custom' %>
 
 - Using many indicators on the same page
-  <% collection.each do |id| %>
+
+<% collection.each do |id| %>
   <%= link_to_remote :url => {:action => 'dosomething'}, :indicator => "link#{id}" %>
   <%= indicator :id => "link#{id}" %>
-  <% end %>
+<% end %>
 
 Defaults are also provided which can be overridden.
 
