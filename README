@@ -18,15 +18,15 @@ All remote actions are automatically enabled to show a gui indicator during a re
 
 To disable the gui indicator:
 
-  <tt><%= remote_function :url => {:action => 'dosomething'}, :indicator => false %></tt>
+<tt><%= remote_function :url => {:action => 'dosomething'}, :indicator => false %></tt>
 
 To use the default values:
 
-  <tt><%= remote_function :url => {:action => 'dosomething'} %> <%= indicator %></tt>
+<tt><%= remote_function :url => {:action => 'dosomething'} %> <%= indicator %></tt>
 
 To use a custom <tt>:id</tt>:
 
-  <tt><%= remote_function :url => {:action => 'dosomething'}, :indicator => 'custom' %> <%= indicator :id => 'custom' %></tt>
+<tt><%= remote_function :url => {:action => 'dosomething'}, :indicator => 'custom' %> <%= indicator :id => 'custom' %></tt>
 
 Using many indicators on the same page:
 
