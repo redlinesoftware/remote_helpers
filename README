@@ -39,11 +39,11 @@ Defaults are also provided which can be overridden.
 
 The default image name to use:
 
-  <tt>default_image = 'indicator.gif'</tt>
+<tt>default_image = 'indicator.gif'</tt>
 
 The default id that's used:
 
-  <tt>default_id = 'indicator'</tt>
+<tt>default_id = 'indicator'</tt>
 
 See the enclosed README for more information.
 
