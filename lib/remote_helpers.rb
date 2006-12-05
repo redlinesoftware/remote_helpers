@@ -61,10 +61,33 @@ module ActionView::Helpers::PrototypeHelper
   #     <%= link_to_remote :url => {:action => 'dosomething'}, :indicator => "link#{id}" %> <%= indicator :id => "link#{id}" %>
   #   <% end %>
   def indicator(options = {})
+    indicator_image indicator_options(options)
+  end
+
+  # Sets the proper options for custom indicators.
+  #
+  # === Example
+  #
+  # Create an indicator with text
+  #   <%= content_tag 'span', 'Updating Data... ', indicator_options %>
+  def indicator_options(options = {})
     options.reverse_merge!(:id => RemoteIndicator.default_id, :hide => true)
-
     options[:style] = [options[:style], 'display:none'].compact.join(';') if options.delete(:hide)
+    options
+  end
 
+
+  # Creates an indicator image.  The options supplied are the same used with +image_tag+
+  #
+  # This method differs from +indicator+ in that it simply produces the indicator image without
+  # the additional indicator options to for hiding the image by default etc.  Without the
+  # additional options, this method can create the standalone indicator image for use in more
+  # complex indicators that use the image in combonation with additional markup.
+  # 
+  # === Example
+  #
+  # <%= content_tag 'div', 'Updating Data... ' + indicator_image, indicator_options %>
+  def indicator_image(options = {})
     image_tag RemoteIndicator.default_image, options
   end
 
