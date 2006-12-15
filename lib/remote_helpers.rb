@@ -10,18 +10,23 @@
 # Default values that can be overridden in <tt>environment.rb</tt>
 #
 # * <tt>default_image</tt> - The default image indicator
-# * <tt>default_id</tt> - The default css id given to the indicator image
+# * <tt>default_id</tt> - The default css id given to the indicator
+# * <tt>default_class</tt> - The default css class given to the indicator
 #
 # == Examples
 #
 # * <tt>RemoteIndicator.default_image = 'spinner.gif'</tt>
 # * <tt>RemoteIndicator.default_id = 'spinner'</tt>
+# * <tt>RemoteIndicator.default_class = 'spinner'</tt>
 class RemoteIndicator
   @@default_image = 'indicator.gif'
   cattr_accessor :default_image
 
   @@default_id    = 'indicator'
   cattr_accessor :default_id
+
+  @@default_class = 'indicator'
+  cattr_accessor :default_class
 end
 
 # Progress indication is built in using the <tt>indicator</tt> method and the optional <tt>:indicator</tt> option for remote calls.
@@ -42,14 +47,14 @@ end
 #   Set :indicator to false if no indicator is to be used.
 # * <tt>:disable_form</tt> - Specifies if the form will disable or not during the remote call.
 #   Defaults to true.
-# Set :disable_form to false to keep the form enabled during a remote function call.
+#   Set :disable_form to false to keep the form enabled during a remote function call.
+# * <tt>:before_effect</tt> - Specifies the before 'effect' for the indicator.
+#   Defaults to 'Element.show'.
+# * <tt>:after_effect</tt> - Specifies the after 'effect' for the indicator.
+#   Defaults to 'Element.hide'.
 module ActionView::Helpers::PrototypeHelper
 
   # Creates an indicator image.  The options supplied are the same used with +image_tag+
-  #
-  # Current and additional options are:
-  # * <tt>:id</tt> - The css id of the indicator image.  Defaults to <tt>RemoteIndicator.default_id</tt>
-  # * <tt>:hide</tt> - Hide the image by default.  Defaults to true.
   #
   # === Examples
   # 
@@ -66,12 +71,17 @@ module ActionView::Helpers::PrototypeHelper
 
   # Sets the proper options for custom indicators.
   #
+  # Current and additional options are:
+  # * <tt>:id</tt> - The css id of the indicator.  Defaults to <tt>RemoteIndicator.default_id</tt>
+  # * <tt>:class</tt> - The css class of the indicator.  Defaults to <tt>RemoteIndicator.default_class</tt>
+  # * <tt>:hide</tt> - Hide the image by default.  Defaults to true.
+  #
   # === Example
   #
   # Create an indicator with text
   #   <%= content_tag 'span', 'Updating Data... ', indicator_options %>
   def indicator_options(options = {})
-    options.reverse_merge!(:id => RemoteIndicator.default_id, :hide => true)
+    options.reverse_merge!(:id => RemoteIndicator.default_id, :class => RemoteIndicator.default_class, :hide => true)
     options[:style] = [options[:style], 'display:none'].compact.join(';') if options.delete(:hide)
     options
   end
@@ -97,6 +107,7 @@ module ActionView::Helpers::PrototypeHelper
   # * To use the default values - <tt><%= remote_function :url => {:action => 'dosomething'} %> <%= indicator %></tt>
   # * To disable the gui indicator - <tt><%= remote_function :url => {:action => 'dosomething'}, :indicator => false %></tt>
   # * To use a custom :id - <tt><%= remote_function :url => {:action => 'dosomething'}, :indicator => 'custom' %> <%= indicator :id => 'custom' %></tt>
+  # * To fade the indicator instead of simply hiding it - <tt><%= remote_function(:update => 'someid', :url => {:action => 'dosomething'}, :after_effect => 'new Effect.Fade') %></tt>
   #
   # === Examples using :disable_form
   # See module documentation for usage of the <tt>:disable_form</tt> option.
@@ -115,13 +126,13 @@ module ActionView::Helpers::PrototypeHelper
   # and your action won't complete (In development mode you will be shown an alert if the indicator has not been defined).
   # This doesn't apply if you set the indicator to false... <tt>:indicator => false</tt>.
   def remote_function(options)
-    options.reverse_merge! :indicator => RemoteIndicator.default_id
+    options.reverse_merge! :indicator => RemoteIndicator.default_id, :before_effect => 'Element.show', :after_effect => 'Element.hide'
 
     if indicator = options.delete(:indicator)
-      before_js = "Element.show('#{indicator}')"
+      before_js = "#{options[:before_effect]}('#{indicator}')"
       event_options = {
         :before => (RAILS_ENV == 'development' ? "try { #{before_js} } catch(e) { alert('The remote helper indicator \\'#{indicator}\\' has not been defined.\\n\\nEither define the indicator with the \\'indicator\\' method or pass :indicator => false as an option to disable the indicator.') }" : before_js),
-        :complete => "Element.hide('#{indicator}')"
+        :complete => "#{options[:after_effect]}('#{indicator}')"
       }
 
       merge_option_values! options, event_options

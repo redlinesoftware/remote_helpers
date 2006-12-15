@@ -4,6 +4,10 @@ Last time I checked this plugin was incompatible with the unobtrusive javascript
 
 == Updates
 
+Dec. 14, 2006
+- Added a css class option to the indicator options, which is defaulted to 'indicator', but can be overridden with the <tt>@@default_class</tt> variable.
+- Added options to set how the indicator is shown and hidden using two new options <tt>:before_effect</tt> and <tt>:after_effect</tt> which default to 'Element.show' and 'Element.hide' respectively.  For example, :after_effect can be set to 'new Effect.Fade'.
+
 Dec. 5, 2006 - Added two additional methods, +indicator_options+ and +indicator_image+, to allow for more flexible indicators.  See the api for more details.
 
 <tt><%= content_tag 'div', 'Updating Data... ' + indicator_image, indicator_options %></tt>
