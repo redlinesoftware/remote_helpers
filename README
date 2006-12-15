@@ -1,6 +1,8 @@
-== Note
+== Description
 
-Last time I checked this plugin was incompatible with the unobtrusive javascript plugin as it overrides one of the same methods this plugin does. I'll work on a fix to this soon hopefully, but in the mean time, watch out for it.
+Provides helper methods and options for easily adding graphical or textual "indicators" to a page when performing remote (AJAX) calls.
+
+See the examples below for usage.  All remote rails methods wrap the <tt>remote_function</tt> method, so the same options that work for <tt>remote_function</tt> will work for <tt>remote_form_for</tt>, etc.
 
 == Updates
 
@@ -64,3 +66,7 @@ To prevent this from occuring use the :disable_form option and set it to false
 (default is true).
 
 eg.) form_remote_tag(:url => {:action => 'dosomething'}, :disable_form => false)
+
+== Note
+
+Last time I checked this plugin was incompatible with the unobtrusive javascript plugin as it overrides one of the same methods this plugin does. I'll work on a fix to this soon hopefully, but in the mean time, watch out for it.
