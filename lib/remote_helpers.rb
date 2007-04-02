@@ -12,12 +12,14 @@
 # * <tt>default_image</tt> - The default image indicator
 # * <tt>default_id</tt> - The default css id given to the indicator
 # * <tt>default_class</tt> - The default css class given to the indicator
+# * <tt>enable_all</tt> - Enable remote indicators on all remote functions by default
 #
 # == Examples
 #
 # * <tt>RemoteIndicator.default_image = 'spinner.gif'</tt>
 # * <tt>RemoteIndicator.default_id = 'spinner'</tt>
 # * <tt>RemoteIndicator.default_class = 'spinner'</tt>
+# * <tt>RemoteIndicator.enable_all = false</tt>
 class RemoteIndicator
   @@default_image = 'indicator.gif'
   cattr_accessor :default_image
@@ -27,6 +29,9 @@ class RemoteIndicator
 
   @@default_class = 'indicator'
   cattr_accessor :default_class
+
+  @@enable_all = true
+  cattr_accessor :enable_all
 end
 
 # Progress indication is built in using the <tt>indicator</tt> method and the optional <tt>:indicator</tt> option for remote calls.
@@ -45,6 +50,8 @@ end
 # * <tt>:indicator</tt> - The css id of an element to show and hide during a remote call.
 #   Defaults to <tt>RemoteIndicator.default_id</tt>.
 #   Set :indicator to false if no indicator is to be used.
+#   Set :indicator to true in order to use the default indicator (<tt>RemoteIndicator.default_id</tt>).
+#   If RemoteIndicator.enable_all is set to true, :indicator => true is not required.
 # * <tt>:disable_form</tt> - Specifies if the form will disable or not during the remote call.
 #   Defaults to true.
 #   Set :disable_form to false to keep the form enabled during a remote function call.
@@ -80,6 +87,9 @@ module ActionView::Helpers::PrototypeHelper
   #
   # Create an indicator with text
   #   <%= content_tag 'span', 'Updating Data... ', indicator_options %>
+  # 
+  # Pass any options you'd normally use to the method itself
+  #   <%= content_tag 'span', 'Updating Data... ', indicator_options(:style => 'width:100px')
   def indicator_options(options = {})
     options.reverse_merge!(:id => RemoteIndicator.default_id, :class => RemoteIndicator.default_class, :hide => true)
     options[:style] = [options[:style], 'display:none'].compact.join(';') if options.delete(:hide)
@@ -126,9 +136,11 @@ module ActionView::Helpers::PrototypeHelper
   # and your action won't complete (In development mode you will be shown an alert if the indicator has not been defined).
   # This doesn't apply if you set the indicator to false... <tt>:indicator => false</tt>.
   def remote_function(options)
-    options.reverse_merge! :indicator => RemoteIndicator.default_id, :before_effect => 'Element.show', :after_effect => 'Element.hide'
+    options[:indicator] = RemoteIndicator.default_id if options[:indicator] == true || (options[:indicator].nil? && RemoteIndicator.enable_all)
 
     if indicator = options.delete(:indicator)
+      options.reverse_merge! :before_effect => 'Element.show', :after_effect => 'Element.hide'
+    
       before_js = "#{options[:before_effect]}('#{indicator}')"
       event_options = {
         :before => (RAILS_ENV == 'development' ? "try { #{before_js} } catch(e) { alert('The remote helper indicator \\'#{indicator}\\' has not been defined.\\n\\nEither define the indicator with the \\'indicator\\' method or pass :indicator => false as an option to disable the indicator.') }" : before_js),
