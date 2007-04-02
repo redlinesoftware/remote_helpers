@@ -6,6 +6,10 @@ See the examples below for usage.  All remote rails methods wrap the <tt>remote_
 
 == Updates
 
+April 1, 2007
+- Added a new option, <tt>RemoteIndicator.enable_all</tt>, which can be used to turn off indicators on all remote functions by default.
+- This option defaults to true, but if you're integrating with an existing application or indicators are only to be used in select areas of your app, then set this value to false (in your environment.rb file) and an indicator won't be expected by default.  To use the default indicator when <tt>RemoteIndicator.enable_all</tt> is set to false, simply pass <tt>:indicator => true</tt> to the remote function.
+
 Dec. 14, 2006
 - Added a css class option to the indicator options, which is defaulted to 'indicator', but can be overridden with the <tt>@@default_class</tt> variable.
 - Added options to set how the indicator is shown and hidden using two new options <tt>:before_effect</tt> and <tt>:after_effect</tt> which default to 'Element.show' and 'Element.hide' respectively.  For example, :after_effect can be set to 'new Effect.Fade'.
@@ -51,10 +55,14 @@ The default id that's used:
 
 <tt>default_id = 'indicator'</tt>
 
-See the enclosed README for more information.
+You can override these defaults in your environment.rb file like so...
+
+<tt>RemoteIndicator.default_image = 'spinner.gif'</tt>
+
+See the api for more information on options available.
 
 *IMPORTANT GOTCHA*
-Don't forget to use <%= indicator %> on the page with remote calls or the javascript will fail and your action won't complete (In development mode you will be shown an alert if the indicator has not been defined). This doesn't apply if you have used the :indicator => false option.
+Don't forget to use <%= indicator %> on the page with remote calls or the javascript will fail and your action won't complete (In development mode you will be shown an alert if the indicator has not been defined). This doesn't apply if you have used the :indicator => false option or you have turned indicators off by setting RemoteIndicator.enable_all to false.
 
 == Additional Form Methods
 
