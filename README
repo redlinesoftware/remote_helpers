@@ -6,6 +6,18 @@ See the examples below for usage.  All remote rails methods wrap the <tt>remote_
 
 == Updates
 
+May 11, 2007
+- Checked in an experimental feature.  Could possibly change in the future.  Comments on the feature are welcome.
+- new :toggle option.  Specify the id of the indicator to toggle the current element with.
+
+ex.)
+<tt>
+<%= link_to_remote 'link', :url => url, :indicator => {:toggle => indicator_id} %>
+<%= indicator :id => indicator_id %>
+</tt>
+
+- This will toggle the link with the specified indicator when the remote request is made.  ie. The link will be hidden and the indicator will be shown.
+
 April 1, 2007
 - Added a new option, <tt>RemoteIndicator.enable_all</tt>, which can be used to turn off indicators on all remote functions by default.
 - This option defaults to true, but if you're integrating with an existing application or indicators are only to be used in select areas of your app, then set this value to false (in your environment.rb file) and an indicator won't be expected by default.  To use the default indicator when <tt>RemoteIndicator.enable_all</tt> is set to false, simply pass <tt>:indicator => true</tt> to the remote function.
