@@ -13,6 +13,7 @@
 # * <tt>default_id</tt> - The default css id given to the indicator
 # * <tt>default_class</tt> - The default css class given to the indicator
 # * <tt>enable_all</tt> - Enable remote indicators on all remote functions by default
+# * <tt>effect</tt> - The default effect to apply to the indicator when it is shown(before) and hidden(after)
 #
 # == Examples
 #
@@ -20,6 +21,7 @@
 # * <tt>RemoteIndicator.default_id = 'spinner'</tt>
 # * <tt>RemoteIndicator.default_class = 'spinner'</tt>
 # * <tt>RemoteIndicator.enable_all = false</tt>
+# * <tt>RemoteIndicator.effect = {:before => 'new Effect.Appear', :after => 'new Effect.Fade'}</tt>
 class RemoteIndicator
   @@default_image = 'indicator.gif'
   cattr_accessor :default_image
@@ -32,6 +34,9 @@ class RemoteIndicator
 
   @@enable_all = true
   cattr_accessor :enable_all
+  
+  @@effect = {:before => 'Element.show', :after => 'Element.hide'}
+  cattr_accessor :effect
 end
 
 # Progress indication is built in using the <tt>indicator</tt> method and the optional <tt>:indicator</tt> option for remote calls.
@@ -139,12 +144,23 @@ module ActionView::Helpers::PrototypeHelper
     options[:indicator] = RemoteIndicator.default_id if options[:indicator] == true || (options[:indicator].nil? && RemoteIndicator.enable_all)
 
     if indicator = options.delete(:indicator)
-      options.reverse_merge! :before_effect => 'Element.show', :after_effect => 'Element.hide'
+      options.reverse_merge! :before_effect => RemoteIndicator.effect[:before], :after_effect => RemoteIndicator.effect[:after]
+
+      indicator = indicator[:toggle] if (toggle = indicator.is_a?(Hash))
     
-      before_js = "#{options[:before_effect]}('#{indicator}')"
+      before_js = returning String.new do |js|
+        js << "Element.hide(this);" if toggle
+        js << "#{options[:before_effect]}('#{indicator}')"
+      end
+
+      after_js = returning String.new do |js|
+        js << "#{options[:after_effect]}('#{indicator}')"
+        js << ";Element.show(this)" if toggle
+      end
+
       event_options = {
         :before => (RAILS_ENV == 'development' ? "try { #{before_js} } catch(e) { alert('The remote helper indicator \\'#{indicator}\\' has not been defined.\\n\\nEither define the indicator with the \\'indicator\\' method or pass :indicator => false as an option to disable the indicator.') }" : before_js),
-        :complete => "#{options[:after_effect]}('#{indicator}')"
+        :complete => after_js
       }
 
       merge_option_values! options, event_options
