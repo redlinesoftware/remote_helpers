@@ -57,6 +57,10 @@ Using many indicators on the same page:
     <%= indicator :id => "link#{id}" %>
   <% end %>
 
+To use a custom image:
+
+<tt><%= image_tag 'custom.gif', indicator_options %></tt>
+
 Defaults are also provided which can be overridden.
 
 The default image name to use:
