@@ -73,6 +73,9 @@ module ActionView::Helpers::PrototypeHelper
   # Using a custom indicator id
   #   <%= indicator :id => 'spinner' %>
   #
+  # Shorthand using a string for the options (sets the :id automatically)
+  #   <%= indicator 'spinner' %>
+  #
   # Using many indicators on the same page 
   #   <% collection.each do |id| %>
   #     <%= link_to_remote :url => {:action => 'dosomething'}, :indicator => "link#{id}" %> <%= indicator :id => "link#{id}" %>
@@ -96,6 +99,9 @@ module ActionView::Helpers::PrototypeHelper
   # Pass any options you'd normally use to the method itself
   #   <%= content_tag 'span', 'Updating Data... ', indicator_options(:style => 'width:100px')
   def indicator_options(options = {})
+    # if options is a string then use it as the :id value
+    options = {:id => options} if options.is_a?(String)
+
     options.reverse_merge!(:id => RemoteIndicator.default_id, :class => RemoteIndicator.default_class, :hide => true)
     options[:style] = [options[:style], 'display:none'].compact.join(';') if options.delete(:hide)
     options
