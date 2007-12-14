@@ -188,7 +188,7 @@ module ActionView::Helpers::PrototypeHelper
   #
   # Prevents the form from being disabled
   #   <%= form_remote_tag(:url => {:action => 'dosomething'}, :disable_form => false) %>
-  def form_remote_tag(options = {})
+  def form_remote_tag(options = {}, &block)
     options.reverse_merge! :disable_form => true
 
     if options.delete(:disable_form)
@@ -196,7 +196,7 @@ module ActionView::Helpers::PrototypeHelper
       merge_option_values! options, {:before => 'var form = this', :complete => 'Form.enable(form)', :after => 'Form.disable(form)'}
     end
     
-    form_remote_tag_old(options)
+    form_remote_tag_old(options, &block)
   end
 
   alias :submit_to_remote_old :submit_to_remote

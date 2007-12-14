@@ -6,6 +6,9 @@ See the examples below for usage.  All remote rails methods wrap the <tt>remote_
 
 == Updates
 
+Dec 13, 2007
+- Fixed to work with rails 2.0.1
+
 May 11, 2007
 - Checked in an experimental feature.  Could possibly change in the future.  Comments on the feature are welcome.
 - new :toggle option.  Specify the id of the indicator to toggle the current element with.
