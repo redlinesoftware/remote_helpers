@@ -60,6 +60,10 @@ Using many indicators on the same page:
     <%= indicator :id => "link#{id}" %>
   <% end %>
 
+A string can be passed to <tt>indicator</tt> which is a shorthand for specifying the :id:
+
+<tt><%= indicator 'delete_spinner' %></tt> is the same as <tt><%= indicator :id => 'delete_spinner' %></tt>
+
 To use a custom image:
 
 <tt><%= image_tag 'custom.gif', indicator_options %></tt>
