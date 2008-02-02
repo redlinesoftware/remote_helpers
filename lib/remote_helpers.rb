@@ -193,7 +193,13 @@ module ActionView::Helpers::PrototypeHelper
 
     if options.delete(:disable_form)
       # we can't disable using :before because disabled fields aren't serialized, must use :after
-      merge_option_values! options, {:before => 'var form = this', :complete => 'Form.enable(form)', :after => 'Form.disable(form)'}
+      merge_option_values! options, {
+        :before => 'var form = $(this), disabled_elems = []',
+        # save form elements that are already disabled
+        :after => "disabled_elems = form.select(':disabled'); Form.disable(form)",
+        # re-disable any previously disabled elements
+        :complete => "Form.enable(form); disabled_elems.invoke('disable')"
+      }
     end
     
     form_remote_tag_old(options, &block)
