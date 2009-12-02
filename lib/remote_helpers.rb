@@ -57,6 +57,7 @@ end
 #   Set :indicator to false if no indicator is to be used.
 #   Set :indicator to true in order to use the default indicator (<tt>RemoteIndicator.default_id</tt>).
 #   If RemoteIndicator.enable_all is set to true, :indicator => true is not required.
+#   Set :indicator to a hash with the :toggle option to replace the current element with the dom element specified by :toggle. Ex. <tt>:indicator => {:toggle => dom_id(object)}</tt>
 # * <tt>:disable_form</tt> - Specifies if the form will disable or not during the remote call.
 #   Defaults to true.
 #   Set :disable_form to false to keep the form enabled during a remote function call.
@@ -76,9 +77,12 @@ module ActionView::Helpers::PrototypeHelper
   # Shorthand using a string for the options (sets the :id automatically)
   #   <%= indicator 'spinner' %>
   #
+  # Toggle the current link with an indicator
+  #   <%= link_to_remote image_tag('add.png'), :url => do_something_path, :indicator => {:toggle => 'spinner'} %> <%= indicator 'spinner' %>
+  #
   # Using many indicators on the same page 
   #   <% collection.each do |id| %>
-  #     <%= link_to_remote :url => {:action => 'dosomething'}, :indicator => "link#{id}" %> <%= indicator :id => "link#{id}" %>
+  #     <%= link_to_remote :url => do_something_path, :indicator => "link#{id}" %> <%= indicator :id => "link#{id}" %>
   #   <% end %>
   def indicator(options = {})
     indicator_image indicator_options(options)
