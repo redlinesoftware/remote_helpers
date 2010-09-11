@@ -158,12 +158,12 @@ module ActionView::Helpers::PrototypeHelper
 
       indicator = indicator[:toggle] if (toggle = indicator.is_a?(Hash))
     
-      before_js = returning String.new do |js|
+      before_js = String.new.tap do |js|
         js << "Element.hide(this);" if toggle
         js << "#{options[:before_effect]}('#{indicator}')"
       end
 
-      after_js = returning String.new do |js|
+      after_js = String.new.tap do |js|
         js << "#{options[:after_effect]}('#{indicator}')"
         js << ";Element.show(this)" if toggle
       end
